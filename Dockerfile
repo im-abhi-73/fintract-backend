@@ -1,7 +1,13 @@
+# Stage 1: Build JAR
+FROM maven:3.9.2-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run JAR
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-
-COPY target/FinTrackSystem-0.0.1-SNAPSHOT.jar fintrack-v1.0.jar
+COPY --from=build /app/target/FinTrackSystem-0.0.1-SNAPSHOT.jar fintrack-v1.0.jar
 EXPOSE 9000
-
 ENTRYPOINT ["java","-jar","fintrack-v1.0.jar"]
